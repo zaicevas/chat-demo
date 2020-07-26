@@ -1,21 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, StyleSheet, TextInput, View } from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
+import WebSocketClient from './WebSocketClient';
 
 const App = () => {
   const [name, setName] = useState('');
   const [isEnter, setIsEnter] = useState(false);
   const [messages, setMessages] = useState([]);
 
-  const client = new WebSocket('ws://localhost:8080/chat');
-  client.onmessage = (message) => {
-    const newMessages = JSON.parse(message.data);
-    setMessages(GiftedChat.append(messages, newMessages));
-  };
+  useEffect(() => {
+    return () => WebSocketClient.close();
+  }, []);
+
+  useEffect(() => {
+    WebSocketClient.onReceiveMessage = (newMessage) => {
+      setMessages(GiftedChat.append(messages, newMessage));
+    };
+  }, [messages]);
 
   const onSend = (newMessages) => {
-    if (client.readyState === client.OPEN)
-      client.send(JSON.stringify(newMessages[0]));
+    WebSocketClient.send(newMessages[0]);
   };
 
   if (!isEnter)
