@@ -8,7 +8,7 @@ const App = () => {
   const [messages, setMessages] = useState([]);
 
   const client = new WebSocket('ws://localhost:8080/chat');
-  client.onmessage = message => {
+  client.onmessage = (message) => {
     const newMessages = JSON.parse(message.data);
     setMessages(GiftedChat.append(messages, newMessages));
   };
@@ -17,36 +17,39 @@ const App = () => {
     if (client.readyState === client.OPEN)
       client.send(JSON.stringify(newMessages[0]));
   };
-  
+
   if (!isEnter)
     return (
       <View style={styles.container}>
-          <TextInput
-        style={styles.textInput}
-        textAlign="center"
-        value={name}
-        placeholder="Name"
-        onChangeText={text => setName(text)}
-      />
+        <TextInput
+          style={styles.textInput}
+          textAlign="center"
+          value={name}
+          placeholder="Name"
+          onChangeText={(text) => setName(text)}
+        />
         <Button title="Enter" onPress={() => setIsEnter(true)} />
       </View>
     );
-    else {
-      const user = { _id: name, 
-        name, 
-        avatar: 'https://cdn.pixabay.com/photo/2016/11/18/23/38/child-1837375__340.png'
-      };
+  else {
+    const user = {
+      _id: name,
+      name,
+      avatar:
+        'https://cdn.pixabay.com/photo/2016/11/18/23/38/child-1837375__340.png',
+    };
 
-      return (
-        <View style={{ flex: 1 }}>
-          <GiftedChat
-            messages={messages}
-            onSend={newMessages => onSend(newMessages)}
-            user={user}
-            renderUsernameOnMessage
-          />
-        </View>);
-    }
+    return (
+      <View style={{ flex: 1 }}>
+        <GiftedChat
+          messages={messages}
+          onSend={(newMessages) => onSend(newMessages)}
+          user={user}
+          renderUsernameOnMessage
+        />
+      </View>
+    );
+  }
 };
 
 const styles = StyleSheet.create({
@@ -60,8 +63,8 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
-    width: '50%'
-  }
+    width: '50%',
+  },
 });
 
 export default App;
